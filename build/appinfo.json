@@ -1,0 +1,43 @@
+{
+    "displayName": "MinTur",
+    "uuid": "8710cd83-9b81-4016-9c41-ab8a705a5c0d",
+    "sdkVersion": "3",
+    "enableMultiJS": true,
+    "targetPlatforms": [
+        "aplite",
+        "basalt",
+        "chalk",
+        "diorite",
+        "emery",
+        "flint",
+        "gabbro"
+    ],
+    "watchapp": {
+        "watchface": false
+    },
+    "messageKeys": {
+        "JS_READY": 10000,
+        "MSG_TYPE": 10001,
+        "STOP_INDEX": 10002,
+        "STOP_NAME": 10003,
+        "DISTANCE": 10004
+    },
+    "resources": {
+        "media": []
+    },
+    "capabilities": [
+        "location"
+    ],
+    "name": "MinTur",
+    "shortName": "MinTur",
+    "longName": "MinTur",
+    "versionLabel": "1.0",
+    "companyName": "Kennet Mathisen",
+    "appKeys": {
+        "JS_READY": 10000,
+        "MSG_TYPE": 10001,
+        "STOP_INDEX": 10002,
+        "STOP_NAME": 10003,
+        "DISTANCE": 10004
+    }
+}

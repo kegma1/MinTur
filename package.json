@@ -1,0 +1,37 @@
+{
+  "name": "MinTur",
+  "author": "Kennet Mathisen",
+  "version": "1.0.0",
+  "keywords": ["pebble-app"],
+  "private": true,
+  "dependencies": {},
+  "pebble": {
+    "displayName": "MinTur",
+    "uuid": "8710cd83-9b81-4016-9c41-ab8a705a5c0d",
+    "sdkVersion": "3",
+    "enableMultiJS": true,
+    "targetPlatforms": [
+      "aplite",
+      "basalt",
+      "chalk",
+      "diorite",
+      "emery",
+      "flint",
+      "gabbro"
+    ],
+    "watchapp": {
+      "watchface": false
+    },
+    "messageKeys": [
+      "JS_READY",
+      "MSG_TYPE",
+      "STOP_INDEX",
+      "STOP_NAME",
+      "DISTANCE"
+    ],
+    "resources": {
+      "media": []
+    },
+    "capabilities": ["location"]
+  }
+}
