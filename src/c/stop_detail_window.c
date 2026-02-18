@@ -22,7 +22,7 @@ static void devider_update_proc(Layer *layer, GContext *ctx) {
     
     const int16_t yy = 11;    
 
-    graphics_context_set_stroke_color(ctx, PBL_IF_COLOR_ELSE(GColorWhite, GColorBlack));
+    graphics_context_set_stroke_color(ctx, GColorBlack);
     graphics_draw_line(ctx, GPoint(0, yy), GPoint(bounds.size.w, yy));
 }
 
