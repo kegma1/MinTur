@@ -1,14 +1,19 @@
-#include "stops_nearby_window.h"
 #include "MinTur.h"
+#include "stops_nearby_window.h"
+#include "stop_detail_window.h"
+
+static Window *s_stops_nearby_window;
 
 static MenuLayer *s_menu_layer;
 
-static NearbyStop nearby_stops[MAX_STOPS_NEARBY];
+static Stop nearby_stops[MAX_STOPS_NEARBY];
 static int nearby_stop_count = 0;
 
 
 static void select_callback(struct MenuLayer *s_menu_layer, MenuIndex *cell_index, void *callback_context) {
-    
+    stop_detail_set_stop(&nearby_stops[cell_index->row]);
+	Window* stop_detail_window = stop_detail_window_get();
+	window_stack_push(stop_detail_window, true);
 }
 
 static uint16_t get_sections_count_callback(struct MenuLayer *menulayer, uint16_t section_index, void *callback_context) {
@@ -22,7 +27,7 @@ static int16_t get_cell_height_callback(MenuLayer *menu_layer, MenuIndex *cell_i
 #endif
 
 static void draw_row_handler(GContext *ctx, const Layer *cell_layer, MenuIndex *cell_index, void *callback_context) {
-  NearbyStop *ns = &nearby_stops[cell_index->row];
+  Stop *ns = &nearby_stops[cell_index->row];
 
   char dist_as_string[10];
 
@@ -117,9 +122,16 @@ Window* stops_nearby_window_create(void) {
         .unload = stops_nearby_window_unload,
     });
 
+	s_stops_nearby_window = window;
+
     return window;
 }
 
-void stops_nearby_window_destroy(Window *window) {
-    window_destroy(window);
+void stops_nearby_window_destroy() {
+    window_destroy(s_stops_nearby_window);
+	s_stops_nearby_window = NULL;
+}
+
+Window* stops_nearby_window_get(void) {
+	return s_stops_nearby_window;
 }

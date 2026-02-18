@@ -1,9 +1,8 @@
 #include "MinTur.h"
 #include "stops_nearby_window.h"
+#include "stop_detail_window.h"
 
 static bool s_js_ready;
-
-static Window *s_stops_nearby_window;
 
 static AppTimer *s_timeout_timer;
 
@@ -68,14 +67,16 @@ static void init(void) {
 	const int outbox_size = 128;
 	app_message_open(inbox_size, outbox_size);
 
-	s_stops_nearby_window = stops_nearby_window_create();
+	Window *stops_nearby_window = stops_nearby_window_create();
+	stop_detail_window_create();
 
 	const bool animated = true;
-	window_stack_push(s_stops_nearby_window, animated);
+	window_stack_push(stops_nearby_window, animated);
 }
 
 static void deinit(void) {
-	stops_nearby_window_destroy(s_stops_nearby_window);
+	stops_nearby_window_destroy();
+	stop_detail_window_destroy();
 }
 
 int main(void) {

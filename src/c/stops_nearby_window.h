@@ -5,13 +5,18 @@
 
 typedef struct {
   int index;
+  // char id[32];
   char name[32];
   int distance;
-} NearbyStop;
+  // float lon;
+  // float lat;
+
+} Stop;
 
 
 Window* stops_nearby_window_create(void);
-void stops_nearby_window_destroy(Window *window);
+void stops_nearby_window_destroy(void);
+Window* stops_nearby_window_get(void);
 
 void stops_nearby_handle_message(DictionaryIterator *iterator);
-void stops_nearby_request(void);
+

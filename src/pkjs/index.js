@@ -100,6 +100,8 @@ function get_stops_nearby_location_success(pos) {
                     distance: Math.round(e.node.distance)
                 };
 
+                console.log(stop.transportMode[0])
+
                 stops[i] = stop;
             });
 
@@ -136,8 +138,8 @@ function get_stops_nearby_location_success(pos) {
     xhr.send(JSON.stringify({
         query: query,
         variables: {
-            lat: DEBUG ? 59.912126 : pos.coords.latitude,
-            lon: DEBUG ? 10.762378 : pos.coords.longitude
+            lat: DEBUG ? 59.911430 : pos.coords.latitude,
+            lon: DEBUG ? 10.733166 : pos.coords.longitude
         }
     }));
 }

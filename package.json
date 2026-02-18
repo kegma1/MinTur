@@ -27,7 +27,11 @@
       "MSG_TYPE",
       "STOP_INDEX",
       "STOP_NAME",
-      "DISTANCE"
+      "DISTANCE",
+      "STOP_ID",
+      "STOP_LON",
+      "STOP_LAT",
+      "STOP_MODES"
     ],
     "resources": {
       "media": []
