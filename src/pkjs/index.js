@@ -1,4 +1,4 @@
-const DEBUG = true;
+const DEBUG = false;
 let stops = {};
 
 let iota_val = 1
