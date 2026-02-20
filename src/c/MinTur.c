@@ -2,11 +2,13 @@
 #include "stops_nearby_window.h"
 #include "stop_detail_window.h"
 
+// test 2
+
 static bool s_js_ready;
 
 static AppTimer *s_timeout_timer;
 
-bool comm_is_js_ready() { 
+bool comm_is_js_ready() {
 	return s_js_ready;
 }
 
@@ -32,13 +34,13 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 	case POST_NEARBY_STOP:
 		stops_nearby_handle_message(iterator);
 		break;
-	
+
 	default:
 		APP_LOG(APP_LOG_LEVEL_WARNING, "Unsupported message type");
 		break;
 	}
 
-    
+
 }
 
 static void inbox_dropped_callback(AppMessageResult reason, void *context) {
