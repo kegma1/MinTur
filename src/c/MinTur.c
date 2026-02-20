@@ -2,8 +2,6 @@
 #include "stops_nearby_window.h"
 #include "stop_detail_window.h"
 
-// test 2
-
 static bool s_js_ready;
 
 static AppTimer *s_timeout_timer;

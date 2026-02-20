@@ -29,9 +29,9 @@ static int16_t get_cell_height_callback(MenuLayer *menu_layer, MenuIndex *cell_i
 static void draw_row_handler(GContext *ctx, const Layer *cell_layer, MenuIndex *cell_index, void *callback_context) {
   Stop *ns = &nearby_stops[cell_index->row];
 
-  char dist_as_string[10];
+  char dist_as_string[6];
 
-  snprintf(dist_as_string, sizeof(dist_as_string), "(%dm)", ns->distance);
+  snprintf(dist_as_string, sizeof(dist_as_string), "%dm", ns->distance);
 
 
   menu_cell_basic_draw(ctx, cell_layer, ns->name, dist_as_string, NULL);

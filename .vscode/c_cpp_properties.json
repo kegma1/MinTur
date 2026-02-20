@@ -4,7 +4,9 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/var/home/kennet/Distroboxes/Pebble/.pebble-sdk/SDKs/4.9.77/sdk-core/pebble/basalt/include"
+                "${workspaceFolder}/build/include",
+                "${workspaceFolder}/build/flint/*",
+                "/var/home/kennet/Distroboxes/Pebble/.pebble-sdk/SDKs/4.9.77/sdk-core/pebble/flint/include"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
