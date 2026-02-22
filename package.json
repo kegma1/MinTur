@@ -33,7 +33,8 @@
       "STOP_LAT",
       "STOP_MODES",
       "LINE_CODE",
-      "LINE_TRANSPORT_MODE"
+      "LINE_TRANSPORT_MODE",
+      "DONE_SENDING"
     ],
     "resources": {
       "media": [

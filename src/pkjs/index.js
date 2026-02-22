@@ -44,13 +44,11 @@ function send_lines_per_transportMode(stop) {
     let line_data = get_lines_per_transportMode(stop);
     
     let send_line_data = (line_data, i) => {
-
-
-
         let data = {
             "MSG_TYPE": POST_LINE_DATA,
             "LINE_TRANSPORT_MODE": line_data[i][0],
             "LINE_CODE": line_data[i][1],
+            "DONE_SENDING": line_data.length > i + 1 ? 0 : 1,
         }
 
         Pebble.sendAppMessage(data,

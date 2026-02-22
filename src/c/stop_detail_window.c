@@ -66,8 +66,9 @@ void stop_detail_handle_message(DictionaryIterator *iterator) {
 void line_data_handle_message(DictionaryIterator *iterator) {
     Tuple *line_code_t = dict_find(iterator, MESSAGE_KEY_LINE_CODE);
 	Tuple *transport_mode_t = dict_find(iterator, MESSAGE_KEY_LINE_TRANSPORT_MODE);
+    Tuple *done_sending_t = dict_find(iterator, MESSAGE_KEY_DONE_SENDING);
 
-    if (line_code_t && transport_mode_t) {
+    if (line_code_t && transport_mode_t && done_sending_t) {
         
         TransportMode mode = parse_mode(transport_mode_t->value->cstring);
         if (mode == MODE_UNKNOWN) return;
@@ -79,9 +80,11 @@ void line_data_handle_message(DictionaryIterator *iterator) {
         // APP_LOG(APP_LOG_LEVEL_INFO, "%s, %d, %d", line_data[mode].line_codes[i], line_data[mode].count, line_data[mode].mode);
 
         line_data[mode].count += 1;
-        layer_mark_dirty(s_icon_layer);
+        
+        if (done_sending_t->value->int8 == 1) {
+            layer_mark_dirty(s_icon_layer);
+        }
     }
-
 }
 
 static void request_lines_per_transportMode_timout_timer_handler(void *context);
@@ -143,7 +146,7 @@ static void icon_layer_update_proc(Layer *layer, GContext *ctx) {
 static void stop_detail_window_load(Window *window) {
     Layer *window_layer = window_get_root_layer(window);
     GRect bounds = layer_get_bounds(window_layer);
-    
+
     s_icon_layer = layer_create(GRect(MARGIN, MARGIN*4 + 25, 25, bounds.size.h));
     layer_set_update_proc(s_icon_layer, icon_layer_update_proc);
 
