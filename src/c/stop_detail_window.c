@@ -10,7 +10,6 @@ static Layer *s_devider_layer;
 static Layer *s_icon_layer;
 
 static GDrawCommandImage *s_mode_icons[5];
-static TextLayer *s_lines_layers[4];
 
 Stop *current_stop;
 
@@ -132,22 +131,55 @@ static void devider_update_proc(Layer *layer, GContext *ctx) {
 
 static void icon_layer_update_proc(Layer *layer, GContext *ctx) {
     int offset = 0;
+
+    GRect bounds = layer_get_bounds(layer);
     
     for (int mode = 0; mode < MODE_UNKNOWN; mode++) {
         if (line_data[mode].count > 0) {
             gdraw_command_image_draw(ctx, s_mode_icons[mode], GPoint(0, offset));
+
+            // graphics_context_set_fill_color(ctx, GColorBlack);
+            graphics_context_set_text_color(ctx, GColorBlack);
+
+            int text_offset = 0;
+            for (int i = 0; i < line_data[mode].count; i++) {
+                // graphics_fill_rect(ctx, GRect(25 + 1 + text_offset, offset, bounds.size.w - 27, 25), 5, GCornersAll);
+    
+                graphics_draw_text(
+                    ctx, 
+                    line_data[mode].line_codes[i], 
+                    fonts_get_system_font(FONT_KEY_GOTHIC_14), 
+                    GRect(25 + 1 + text_offset, offset, bounds.size.w - 27, 25),
+                    GTextOverflowModeTrailingEllipsis,
+                    GTextAlignmentLeft,
+                    NULL
+                );
+
+                GSize text_size = graphics_text_layout_get_content_size (
+                    line_data[mode].line_codes[i], 
+                    fonts_get_system_font(FONT_KEY_GOTHIC_14), 
+                    GRect(25 + 1 + text_offset, offset, bounds.size.w - 27, 25),
+                    GTextOverflowModeTrailingEllipsis,
+                    GTextAlignmentLeft
+                );
+                text_offset += text_size.w + 1;
+
+            }
+            
+            
+
+
             offset += 25 + 1;
         }
     }
 }
 
 
-
 static void stop_detail_window_load(Window *window) {
     Layer *window_layer = window_get_root_layer(window);
     GRect bounds = layer_get_bounds(window_layer);
 
-    s_icon_layer = layer_create(GRect(MARGIN, MARGIN*4 + 25, 25, bounds.size.h));
+    s_icon_layer = layer_create(GRect(MARGIN, MARGIN*4 + 25, bounds.size.w - 2 * MARGIN, bounds.size.h));
     layer_set_update_proc(s_icon_layer, icon_layer_update_proc);
 
     layer_add_child(window_layer, s_icon_layer);
