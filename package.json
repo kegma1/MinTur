@@ -31,10 +31,38 @@
       "STOP_ID",
       "STOP_LON",
       "STOP_LAT",
-      "STOP_MODES"
+      "STOP_MODES",
+      "LINE_CODE",
+      "LINE_TRANSPORT_MODE"
     ],
     "resources": {
-      "media": []
+      "media": [
+        {
+          "type": "raw",
+          "name": "ICON_BUS",
+          "file": "bus.pdc"
+        },
+        {
+          "type": "raw",
+          "name": "ICON_FERRY",
+          "file": "ferry.pdc"
+        },
+        {
+          "type": "raw",
+          "name": "ICON_TRAM",
+          "file": "tram.pdc"
+        },
+        {
+          "type": "raw",
+          "name": "ICON_TRAIN",
+          "file": "train.pdc"
+        },
+        {
+          "type": "raw",
+          "name": "ICON_METRO",
+          "file": "metro.pdc"
+        }
+      ]
     },
     "capabilities": ["location"]
   }

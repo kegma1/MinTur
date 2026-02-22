@@ -1,5 +1,5 @@
-const DEBUG = false;
-let stops = {};
+const DEBUG = true;
+let stops = [];
 
 let iota_val = 1
 function iota() {
@@ -8,9 +8,12 @@ function iota() {
     return current_iota;
 }
 
-const REQUEST_NEARBY_STOPS = iota();
-const REQUEST_STOP_DETAILS = iota();
-const POST_NEARBY_STOP = iota();
+const REQUEST_NEARBY_STOPS                    = iota();
+const REQUEST_STOP_DETAILS                    = iota();
+const REQUEST_NEARBY_LINES_PER_TRANSPORT_MODE = iota();
+
+const POST_NEARBY_STOP                        = iota();
+const POST_LINE_DATA                          = iota();
 
 Pebble.addEventListener('ready', 
   function(e) {
@@ -22,16 +25,63 @@ Pebble.addEventListener('ready',
 
 Pebble.addEventListener("appmessage",
     function(e) {
-        console.log("melding mottat!")
+        console.log("melding mottat!", JSON.stringify(e.payload))
         switch(e.payload.MSG_TYPE) {
             case REQUEST_NEARBY_STOPS: 
                 get_stops_nearby();
                 break;
+            case REQUEST_NEARBY_LINES_PER_TRANSPORT_MODE:
+                send_lines_per_transportMode(stops[e.payload.STOP_INDEX]);
+                break;
             default:
                 console.log("Ikke søttet melding type: ", e.payload.MSG_TYPE);
+                break;
         }
     }
 )
+
+function send_lines_per_transportMode(stop) {
+    let line_data = get_lines_per_transportMode(stop);
+    
+    let send_line_data = (line_data, i) => {
+
+
+
+        let data = {
+            "MSG_TYPE": POST_LINE_DATA,
+            "LINE_TRANSPORT_MODE": line_data[i][0],
+            "LINE_CODE": line_data[i][1],
+        }
+
+        Pebble.sendAppMessage(data,
+            () => {
+                console.log(`sendt line number ${i + 1}/${line_data.length}`);
+                if (line_data.length > i + 1) {
+                    send_line_data(line_data, i + 1);
+                } else {
+                    console.log("done sending line data");
+                }
+            },
+            e => console.log(`failed to send line number ${i} `, e)
+        )
+    }
+
+    send_line_data(line_data, 0)
+}
+        
+function get_lines_per_transportMode(stop) {
+    let lines_per_transportMode = new Set();
+    
+    
+    stop.quays.forEach(quay => {
+        quay.lines.forEach(line => {
+            lines_per_transportMode.add(`${line.transportMode}|${line.publicCode}`);
+        })
+    })
+
+
+    return Array.from(lines_per_transportMode).map(str => str.split("|"));
+}
 
 
 function get_stops_nearby() {
@@ -53,24 +103,40 @@ function get_stops_nearby_location_success(pos) {
                 latitude: $lat
                 longitude: $lon
                 filterByPlaceTypes: stopPlace
+                filterByInUse: true
                 maximumDistance: 2000
                 maximumResults: 10
+                filterByModes: [bus, tram, rail, metro, water]
             ) {
-            edges {
-                node {
-                    place {
+                edges {
+                    node {
+                        place {
                         ... on StopPlace {
                             id
                             name
                             latitude
                             longitude
                             transportMode
+                            quays(filterByInUse: true) {
+                                publicCode
+                                name
+                                description
+                                lines {
+                                    name
+                                    publicCode
+                                    transportMode
+                                    presentation {
+                                        colour
+                                        textColour
+                                    }
+                                }
+                            }
                         }
                     }
-                distance
+                    distance
+                    }
+                }
             }
-            }
-        }
         }
     `;
 
@@ -88,7 +154,6 @@ function get_stops_nearby_location_success(pos) {
                 return;
             }
             
-            stops = {};
             res.data.nearest.edges.forEach((e, i) => {                
                 let stop = {
                     index: i,
@@ -97,10 +162,9 @@ function get_stops_nearby_location_success(pos) {
                     latitude: e.node.place.latitude,
                     longitude: e.node.place.longitude,
                     transportMode: e.node.place.transportMode,
-                    distance: Math.round(e.node.distance)
+                    distance: Math.round(e.node.distance),
+                    quays: e.node.place.quays
                 };
-
-                console.log(stop.transportMode[0])
 
                 stops[i] = stop;
             });
@@ -115,8 +179,12 @@ function get_stops_nearby_location_success(pos) {
 
                 Pebble.sendAppMessage(data,
                     () => {
-                        console.log(`sendt stop number ${i}`);
-                        send_stops(stops, i + 1);
+                        console.log(`sendt stop number ${i + 1}/${stops.length}`);
+                        if (stops.length > i + 1) {
+                            send_stops(stops, i + 1);
+                        } else {
+                            console.log("done sending stops");
+                        }
                     },
                     e => console.log(`failed to send stop number ${i} `, e)
                 )

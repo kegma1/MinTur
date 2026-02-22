@@ -32,7 +32,9 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 	case POST_NEARBY_STOP:
 		stops_nearby_handle_message(iterator);
 		break;
-
+	case POST_LINE_DATA:
+		line_data_handle_message(iterator);
+		break;
 	default:
 		APP_LOG(APP_LOG_LEVEL_WARNING, "Unsupported message type");
 		break;
@@ -52,6 +54,7 @@ static void outbox_failed_callback(DictionaryIterator *iterator, AppMessageResul
 static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
 	if (s_js_ready) {
 		app_timer_cancel(s_timeout_timer);
+		s_timeout_timer = NULL;
 	}
 	APP_LOG(APP_LOG_LEVEL_INFO, "Outbox send success!");
 }
@@ -63,8 +66,8 @@ static void init(void) {
 	app_message_register_outbox_failed(outbox_failed_callback);
 	app_message_register_outbox_sent(outbox_sent_callback);
 
-	const int inbox_size = 500;
-	const int outbox_size = 128;
+	const int inbox_size = 512;
+	const int outbox_size = 512;
 	app_message_open(inbox_size, outbox_size);
 
 	Window *stops_nearby_window = stops_nearby_window_create();
