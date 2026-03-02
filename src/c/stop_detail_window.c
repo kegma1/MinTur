@@ -31,7 +31,7 @@ TransportMode parse_mode(const char *mode_str) {
     return MODE_UNKNOWN;
 }
 
-#define MAX_LINES_PER_MODE 20
+#define MAX_LINES_PER_MODE 10
 #define MAX_LINE_CODE_LEN 8
 
 typedef struct {
@@ -129,47 +129,83 @@ static void devider_update_proc(Layer *layer, GContext *ctx) {
     graphics_draw_line(ctx, GPoint(0, yy), GPoint(bounds.size.w, yy));
 }
 
-static void icon_layer_update_proc(Layer *layer, GContext *ctx) {
-    int offset = 0;
+void draw_line_code(GContext *ctx, char *line_code, GRect pos) {
+    GSize text_size = graphics_text_layout_get_content_size (
+        line_code, 
+        fonts_get_system_font(FONT_KEY_GOTHIC_14), 
+        pos,
+        GTextOverflowModeTrailingEllipsis,
+        GTextAlignmentCenter
+    );
 
+    graphics_context_set_fill_color(ctx, GColorBlack);
+    graphics_context_set_text_color(ctx, GColorWhite);
+    GRect background_size = GRect(pos.origin.x, pos.origin.y, text_size.w + 2, text_size.h + 1);
+
+    graphics_fill_rect(ctx, background_size, 1, GCornersAll);
+
+    graphics_draw_text(
+        ctx, 
+        line_code, 
+        fonts_get_system_font(FONT_KEY_GOTHIC_14), 
+        GRect(pos.origin.x + 1, pos.origin.y - 2, text_size.w, text_size.h),
+        GTextOverflowModeTrailingEllipsis,
+        GTextAlignmentCenter,
+        NULL
+    );
+}
+
+GSize get_line_code_size(GContext *ctx, char *line_code, GRect pos) {
+    
+    GSize text_size = graphics_text_layout_get_content_size (
+        line_code, 
+        fonts_get_system_font(FONT_KEY_GOTHIC_14), 
+        pos,
+        GTextOverflowModeTrailingEllipsis,
+        GTextAlignmentCenter
+    );
+
+    GRect background_size = GRect(pos.origin.x, pos.origin.y, text_size.w + 2, text_size.h + 1);
+
+    return background_size.size;
+}
+
+static void icon_layer_update_proc(Layer *layer, GContext *ctx) {
     GRect bounds = layer_get_bounds(layer);
+
+    GPoint offset = GPoint(0, 0);
     
     for (int mode = 0; mode < MODE_UNKNOWN; mode++) {
         if (line_data[mode].count > 0) {
-            gdraw_command_image_draw(ctx, s_mode_icons[mode], GPoint(0, offset));
+            // gdraw_command_image_draw(ctx, s_mode_icons[mode], GPoint(0, offset));
 
             // graphics_context_set_fill_color(ctx, GColorBlack);
             graphics_context_set_text_color(ctx, GColorBlack);
 
-            int text_offset = 0;
             for (int i = 0; i < line_data[mode].count; i++) {
-                // graphics_fill_rect(ctx, GRect(25 + 1 + text_offset, offset, bounds.size.w - 27, 25), 5, GCornersAll);
-    
-                graphics_draw_text(
+                GSize line_code_size = get_line_code_size(
                     ctx, 
                     line_data[mode].line_codes[i], 
-                    fonts_get_system_font(FONT_KEY_GOTHIC_14), 
-                    GRect(25 + 1 + text_offset, offset, bounds.size.w - 27, 25),
-                    GTextOverflowModeTrailingEllipsis,
-                    GTextAlignmentLeft,
-                    NULL
+                    GRect(offset.x, offset.y, bounds.size.w - 27, 25)
                 );
 
-                GSize text_size = graphics_text_layout_get_content_size (
+                if (offset.x + line_code_size.w > bounds.size.w) {
+                    offset.x = 0;
+                    offset.y += line_code_size.h + 1;
+                }
+
+                draw_line_code (
+                    ctx, 
                     line_data[mode].line_codes[i], 
-                    fonts_get_system_font(FONT_KEY_GOTHIC_14), 
-                    GRect(25 + 1 + text_offset, offset, bounds.size.w - 27, 25),
-                    GTextOverflowModeTrailingEllipsis,
-                    GTextAlignmentLeft
+                    GRect(offset.x, offset.y, bounds.size.w - 27, 25) 
                 );
-                text_offset += text_size.w + 1;
 
+                offset.x += line_code_size.w + 1;
+                if (offset.x > bounds.size.w) {
+                    offset.x = 0;
+                    offset.y += line_code_size.h + 1;
+                }
             }
-            
-            
-
-
-            offset += 25 + 1;
         }
     }
 }
