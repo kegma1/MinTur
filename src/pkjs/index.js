@@ -1,5 +1,3 @@
-
-
 const DEBUG = true;
 let stops = [];
 

@@ -102,9 +102,6 @@ static void click_config_provider(void *context) {
 
 static void devider_update_proc(Layer *layer, GContext *ctx) {
     GRect bounds = layer_get_bounds(layer);
-    
-    const int16_t yy = 11;    
-
     graphics_context_set_stroke_color(ctx, GColorBlack);
     graphics_draw_line(ctx, GPoint(0, 0), GPoint(bounds.size.w, 0));
 }
@@ -138,25 +135,20 @@ void draw_line_code(GContext *ctx, char *line_code, GRect pos) {
 
 static void content_update_proc(Layer *layer, GContext *ctx) {
     GRect bounds = layer_get_bounds(layer);
-
-    s_title_layer = text_layer_create(GRect(MARGIN, MARGIN, bounds.size.w - 2 * MARGIN, 50));
-    text_layer_set_overflow_mode(s_title_layer, GTextOverflowModeWordWrap);
     update_title_layer();
-
     GSize text_size = text_layer_get_content_size(s_title_layer);
-        
-    s_description_layer = text_layer_create(GRect(MARGIN, MARGIN + text_size.h, bounds.size.w - 2 * MARGIN, 20));
-    text_layer_set_font(s_description_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
-    text_layer_set_text(s_description_layer, current_quay.desc);
 
-    s_devider_layer = layer_create(GRect(MARGIN, MARGIN + text_size.h + 2, bounds.size.w - 2 * MARGIN, 1));
-    layer_set_update_proc(s_devider_layer, devider_update_proc);
-
-
+    int width = bounds.size.w - 2 * MARGIN;
     
-    layer_add_child(layer, text_layer_get_layer(s_title_layer));
-    layer_add_child(layer, text_layer_get_layer(s_description_layer));
-    layer_add_child(layer, s_devider_layer);
+    layer_set_frame(
+        text_layer_get_layer(s_description_layer),
+        GRect(MARGIN, text_size.h + 4, width, 20)
+    );
+    
+    layer_set_frame(
+        s_devider_layer,
+        GRect(MARGIN, text_size.h + 4, width, 1)
+    );
 }
 
 static void stop_detail_window_load(Window *window) {
@@ -167,10 +159,21 @@ static void stop_detail_window_load(Window *window) {
     layer_set_update_proc(s_content_layer, content_update_proc);
     layer_add_child(window_layer, s_content_layer);
 
+    s_title_layer = text_layer_create(GRect(MARGIN, 0, bounds.size.w - 2 * MARGIN, 50));
+    text_layer_set_font(s_title_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
+    text_layer_set_overflow_mode(s_title_layer, GTextOverflowModeWordWrap); 
 
-   
+    s_description_layer = text_layer_create(GRect(0, 0, 0, 0));
+    text_layer_set_font(s_description_layer, fonts_get_system_font(FONT_KEY_GOTHIC_14));
+    text_layer_set_text(s_description_layer, current_quay.desc);
 
-    
+    s_devider_layer = layer_create(GRect(0, 0, 0, 0));
+    layer_set_update_proc(s_devider_layer, devider_update_proc);
+
+    layer_add_child(s_content_layer, text_layer_get_layer(s_title_layer));
+    layer_add_child(s_content_layer, text_layer_get_layer(s_description_layer));
+    layer_add_child(s_content_layer, s_devider_layer);
+
     request_quay(current_stop->index, current_quay.index);
 }
 
