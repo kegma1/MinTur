@@ -1,3 +1,5 @@
+
+
 const DEBUG = true;
 let stops = [];
 
@@ -11,9 +13,11 @@ function iota() {
 const REQUEST_NEARBY_STOPS                    = iota();
 const REQUEST_STOP_DETAILS                    = iota();
 const REQUEST_NEARBY_LINES_PER_TRANSPORT_MODE = iota();
+const REQUEST_QUAY                            = iota();
 
 const POST_NEARBY_STOP                        = iota();
 const POST_LINE_DATA                          = iota();
+const POST_QUAY_DATA                          = iota();
 
 Pebble.addEventListener('ready', 
   function(e) {
@@ -33,12 +37,33 @@ Pebble.addEventListener("appmessage",
             case REQUEST_NEARBY_LINES_PER_TRANSPORT_MODE:
                 send_lines_per_transportMode(stops[e.payload.STOP_INDEX]);
                 break;
+            case REQUEST_QUAY:
+                send_quay(e.payload.STOP_INDEX, e.payload.QUAY_INDEX);
+                break;                
             default:
                 console.log("Ikke søttet melding type: ", e.payload.MSG_TYPE);
                 break;
         }
     }
 )
+
+function send_quay(stop_index, quay_index) {
+    let stop = stops[stop_index];
+    let quay = stop.quays[quay_index];
+
+    // console.log(JSON.stringify(stop.quays));
+
+    let data = {
+        "MSG_TYPE"  : POST_QUAY_DATA,
+        "QUAY_INDEX": quay_index, 
+        "QUAY_ID"   : quay.id,
+        "QUAY_NAME" : quay.name,
+        "QUAY_CODE" : quay.publicCode || "",
+        "QUAY_DESC" : quay.description || "",
+    }
+
+    Pebble.sendAppMessage(data);
+}
 
 function send_lines_per_transportMode(stop) {
     let line_data = get_lines_per_transportMode(stop);
@@ -66,7 +91,7 @@ function send_lines_per_transportMode(stop) {
 
     send_line_data(line_data, 0)
 }
-        
+
 function get_lines_per_transportMode(stop) {
     let lines_per_transportMode = new Set();
     
@@ -81,7 +106,6 @@ function get_lines_per_transportMode(stop) {
     return Array.from(lines_per_transportMode).map(str => str.split("|"));
 }
 
-
 function get_stops_nearby() {
     navigator.geolocation.getCurrentPosition(
         get_stops_nearby_location_success,
@@ -89,7 +113,6 @@ function get_stops_nearby() {
         {timeout: 15000, maximumAge:60000}
     );
 }
-
 
 function get_stops_nearby_location_success(pos) {
     let xhr = new XMLHttpRequest();
@@ -116,6 +139,7 @@ function get_stops_nearby_location_success(pos) {
                             longitude
                             transportMode
                             quays(filterByInUse: true) {
+                                id
                                 publicCode
                                 name
                                 description
@@ -172,7 +196,8 @@ function get_stops_nearby_location_success(pos) {
                     "MSG_TYPE": POST_NEARBY_STOP,
                     "STOP_INDEX": stops[i].index,
                     "STOP_NAME": stops[i].name,
-                    "DISTANCE": stops[i].distance
+                    "DISTANCE": stops[i].distance,
+                    "QUAY_COUNT": stops[i].quays.length
                 }
 
                 Pebble.sendAppMessage(data,

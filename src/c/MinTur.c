@@ -32,8 +32,8 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 	case POST_NEARBY_STOP:
 		stops_nearby_handle_message(iterator);
 		break;
-	case POST_LINE_DATA:
-		line_data_handle_message(iterator);
+	case POST_QUAY_DATA:
+		quay_data_handle_message(iterator);
 		break;
 	default:
 		APP_LOG(APP_LOG_LEVEL_WARNING, "Unsupported message type");
@@ -52,7 +52,7 @@ static void outbox_failed_callback(DictionaryIterator *iterator, AppMessageResul
 }
 
 static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
-	if (s_js_ready) {
+	if (s_js_ready && s_timeout_timer != NULL) {
 		app_timer_cancel(s_timeout_timer);
 		s_timeout_timer = NULL;
 	}

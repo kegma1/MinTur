@@ -4,8 +4,6 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/build/include",
-                "${workspaceFolder}/build/flint/*",
                 "/var/home/kennet/Distroboxes/Pebble/.pebble-sdk/SDKs/4.9.77/sdk-core/pebble/flint/include"
             ],
             "defines": [],

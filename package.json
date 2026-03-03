@@ -25,16 +25,26 @@
     "messageKeys": [
       "JS_READY",
       "MSG_TYPE",
+      "DONE_SENDING",
+
       "STOP_INDEX",
+      "QUAY_INDEX",
+      
       "STOP_NAME",
       "DISTANCE",
       "STOP_ID",
       "STOP_LON",
       "STOP_LAT",
+
+      "QUAY_ID",
+      "QUAY_NAME",
+      "QUAY_CODE",
+      "QUAY_DESC",
+      "QUAY_COUNT",
+
       "STOP_MODES",
       "LINE_CODE",
-      "LINE_TRANSPORT_MODE",
-      "DONE_SENDING"
+      "LINE_TRANSPORT_MODE"
     ],
     "resources": {
       "media": [

@@ -6,8 +6,9 @@
 typedef struct {
   int index;
   // char id[32];
-  char name[32];
   int distance;
+  int quay_count;
+  char name[32];
   // float lon;
   // float lat;
 

@@ -11,7 +11,7 @@ static int nearby_stop_count = 0;
 
 
 static void select_callback(struct MenuLayer *s_menu_layer, MenuIndex *cell_index, void *callback_context) {
-    stop_detail_set_stop(&nearby_stops[cell_index->row]);
+    stop_detail_set_stop_and_index(&nearby_stops[cell_index->row], 0);
 	Window* stop_detail_window = stop_detail_window_get();
 	window_stack_push(stop_detail_window, true);
 }
@@ -92,8 +92,10 @@ void stops_nearby_handle_message(DictionaryIterator *iterator) {
 	Tuple *index_t = dict_find(iterator, MESSAGE_KEY_STOP_INDEX);
 	Tuple *name_t = dict_find(iterator, MESSAGE_KEY_STOP_NAME);
 	Tuple *dist_t = dict_find(iterator, MESSAGE_KEY_DISTANCE);
+	Tuple *quay_count_t = dict_find(iterator, MESSAGE_KEY_QUAY_COUNT);
 
-	if (index_t && name_t && dist_t) {
+
+	if (index_t && name_t && dist_t && quay_count_t) {
 		int index = index_t->value->int32;
 
 		if (index < 0 || index >= MAX_STOPS_NEARBY) {
@@ -101,6 +103,7 @@ void stops_nearby_handle_message(DictionaryIterator *iterator) {
 		}
 
 		nearby_stops[index].index = index;
+		nearby_stops[index].quay_count = quay_count_t->value->int8;
 		nearby_stops[index].distance = dist_t->value->int32;
 
 		snprintf(nearby_stops[index].name, sizeof(nearby_stops[index].name), "%s", name_t->value->cstring);
