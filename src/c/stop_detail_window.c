@@ -160,7 +160,7 @@ static void stop_detail_window_load(Window *window) {
     layer_add_child(window_layer, s_content_layer);
 
     s_title_layer = text_layer_create(GRect(MARGIN, 0, bounds.size.w - 2 * MARGIN, 50));
-    text_layer_set_font(s_title_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
+    text_layer_set_font(s_title_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
     text_layer_set_overflow_mode(s_title_layer, GTextOverflowModeWordWrap); 
 
     s_description_layer = text_layer_create(GRect(0, 0, 0, 0));
