@@ -2,3 +2,5 @@
 /build
 .lock-waf_linux_build
 svg/*
+.cache
+compile_commands.json
