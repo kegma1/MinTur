@@ -116,11 +116,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1780272455,
-        "narHash": "sha256-SYKDJMrygp6+jxqCAQvMkgitrpZBu2OB17nNuddmsK4=",
+        "lastModified": 1784765122,
+        "narHash": "sha256-ew6oahhTEAR1cBNgGLM/YuPEN8k/mLyyzsErf1gdTKA=",
         "owner": "pebble-dev",
         "repo": "pebble.nix",
-        "rev": "51f2a2619b4cc7f3d143c9d3e8478ff8a2096784",
+        "rev": "cc0a011d3893135670bd264e67c30aa682f9740c",
         "type": "github"
       },
       "original": {
