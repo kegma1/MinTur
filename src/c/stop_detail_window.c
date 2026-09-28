@@ -62,21 +62,21 @@ void quay_data_handle_message(DictionaryIterator *iterator) {
 static void request_quay(int stop_id, int quay_id) {
     APP_LOG(APP_LOG_LEVEL_INFO, "sending request for quay [%d, %d]", stop_id, quay_id);
 
-	DictionaryIterator *iter;
-	AppMessageResult result = app_message_outbox_begin(&iter);
+    DictionaryIterator *iter;
+    AppMessageResult result = app_message_outbox_begin(&iter);
 
-	if (result == APP_MSG_OK) {
-		dict_write_int8(iter, MESSAGE_KEY_MSG_TYPE, REQUEST_QUAY);
-		dict_write_int8(iter, MESSAGE_KEY_STOP_INDEX, stop_id);
+    if (result == APP_MSG_OK) {
+        dict_write_int8(iter, MESSAGE_KEY_MSG_TYPE, REQUEST_QUAY);
+        dict_write_int8(iter, MESSAGE_KEY_STOP_INDEX, stop_id);
         dict_write_int8(iter, MESSAGE_KEY_QUAY_INDEX, quay_id);
 
-		result = app_message_outbox_send();
-		if (result != APP_MSG_OK) {
-			APP_LOG(APP_LOG_LEVEL_ERROR, "Error sending the outbox: %d", (int)result);
-		}
-	} else {
-		APP_LOG(APP_LOG_LEVEL_ERROR, "Error preparing the outbox: %d", (int)result);
-	}
+        result = app_message_outbox_send();
+        if (result != APP_MSG_OK) {
+            APP_LOG(APP_LOG_LEVEL_ERROR, "Error sending the outbox: %d", (int)result);
+        }
+    } else {
+        APP_LOG(APP_LOG_LEVEL_ERROR, "Error preparing the outbox: %d", (int)result);
+    }
 }
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
@@ -131,7 +131,6 @@ void draw_line_code(GContext *ctx, char *line_code, GRect pos) {
         NULL
     );
 }
-
 
 static void content_update_proc(Layer *layer, GContext *ctx) {
     GRect bounds = layer_get_bounds(layer);

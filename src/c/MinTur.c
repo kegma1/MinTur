@@ -39,8 +39,6 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 		APP_LOG(APP_LOG_LEVEL_WARNING, "Unsupported message type");
 		break;
 	}
-
-
 }
 
 static void inbox_dropped_callback(AppMessageResult reason, void *context) {

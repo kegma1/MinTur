@@ -49,8 +49,6 @@ function send_quay(stop_index, quay_index) {
     let stop = stops[stop_index];
     let quay = stop.quays[quay_index];
 
-    // console.log(JSON.stringify(stop.quays));
-
     let data = {
         "MSG_TYPE"  : POST_QUAY_DATA,
         "QUAY_INDEX": quay_index, 
@@ -92,14 +90,12 @@ function send_lines_per_transportMode(stop) {
 
 function get_lines_per_transportMode(stop) {
     let lines_per_transportMode = new Set();
-    
-    
+   
     stop.quays.forEach(quay => {
         quay.lines.forEach(line => {
             lines_per_transportMode.add(`${line.transportMode}|${line.publicCode}`);
         })
     })
-
 
     return Array.from(lines_per_transportMode).map(str => str.split("|"));
 }
