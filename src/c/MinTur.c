@@ -35,6 +35,9 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 	case POST_QUAY_DATA:
 		quay_data_handle_message(iterator);
 		break;
+	case POST_CALL:
+		call_data_handle_message(iterator);
+		break;
 	default:
 		APP_LOG(APP_LOG_LEVEL_WARNING, "Unsupported message type");
 		break;

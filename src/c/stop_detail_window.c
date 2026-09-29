@@ -59,6 +59,10 @@ void quay_data_handle_message(DictionaryIterator *iterator) {
     }   
 }
 
+void call_data_handle_message(DictionaryIterator *iterator) {
+    APP_LOG(APP_LOG_LEVEL_INFO, "handeling call data");
+}
+
 static void request_quay(int stop_id, int quay_id) {
     APP_LOG(APP_LOG_LEVEL_INFO, "sending request for quay [%d, %d]", stop_id, quay_id);
 

@@ -10,12 +10,12 @@ function iota() {
 
 const REQUEST_NEARBY_STOPS                    = iota();
 const REQUEST_STOP_DETAILS                    = iota();
-const REQUEST_NEARBY_LINES_PER_TRANSPORT_MODE = iota();
 const REQUEST_QUAY                            = iota();
+const REQUEST_CALL                            = iota();
 
 const POST_NEARBY_STOP                        = iota();
-const POST_LINE_DATA                          = iota();
 const POST_QUAY_DATA                          = iota();
+const POST_CALL                               = iota();
 
 Pebble.addEventListener('ready', 
   function(e) {
@@ -32,9 +32,6 @@ Pebble.addEventListener("appmessage",
             case REQUEST_NEARBY_STOPS: 
                 get_stops_nearby();
                 break;
-            case REQUEST_NEARBY_LINES_PER_TRANSPORT_MODE:
-                send_lines_per_transportMode(stops[e.payload.STOP_INDEX]);
-                break;
             case REQUEST_QUAY:
                 send_quay(e.payload.STOP_INDEX, e.payload.QUAY_INDEX);
                 break;                
@@ -48,6 +45,7 @@ Pebble.addEventListener("appmessage",
 function send_quay(stop_index, quay_index) {
     let stop = stops[stop_index];
     let quay = stop.quays[quay_index];
+    console.log(JSON.stringify(quay))
 
     let data = {
         "MSG_TYPE"  : POST_QUAY_DATA,
@@ -61,44 +59,6 @@ function send_quay(stop_index, quay_index) {
     Pebble.sendAppMessage(data);
 }
 
-function send_lines_per_transportMode(stop) {
-    let line_data = get_lines_per_transportMode(stop);
-    
-    let send_line_data = (line_data, i) => {
-        let data = {
-            "MSG_TYPE": POST_LINE_DATA,
-            "LINE_TRANSPORT_MODE": line_data[i][0],
-            "LINE_CODE": line_data[i][1],
-            "DONE_SENDING": line_data.length > i + 1 ? 0 : 1,
-        }
-
-        Pebble.sendAppMessage(data,
-            () => {
-                console.log(`sendt line number ${i + 1}/${line_data.length}`);
-                if (line_data.length > i + 1) {
-                    send_line_data(line_data, i + 1);
-                } else {
-                    console.log("done sending line data");
-                }
-            },
-            e => console.log(`failed to send line number ${i} `, e)
-        )
-    }
-
-    send_line_data(line_data, 0)
-}
-
-function get_lines_per_transportMode(stop) {
-    let lines_per_transportMode = new Set();
-   
-    stop.quays.forEach(quay => {
-        quay.lines.forEach(line => {
-            lines_per_transportMode.add(`${line.transportMode}|${line.publicCode}`);
-        })
-    })
-
-    return Array.from(lines_per_transportMode).map(str => str.split("|"));
-}
 
 function get_stops_nearby() {
     navigator.geolocation.getCurrentPosition(
@@ -123,36 +83,40 @@ function get_stops_nearby_location_success(pos) {
                 maximumResults: 10
                 filterByModes: [bus, tram, rail, metro, water]
             ) {
-                edges {
-                    node {
-                        place {
-                        ... on StopPlace {
-                            id
+            edges {
+              node {
+                place {
+                  ... on StopPlace {
+                    id
+                    name
+                    latitude
+                    longitude
+                    transportMode
+                    quays(filterByInUse: true) {
+                      id
+                      publicCode
+                      name
+                      description
+                      estimatedCalls {
+                        aimedArrivalTime
+                        aimedDepartureTime
+                        serviceJourney {
+                          line {
                             name
-                            latitude
-                            longitude
-                            transportMode
-                            quays(filterByInUse: true) {
-                                id
-                                publicCode
-                                name
-                                description
-                                lines {
-                                    name
-                                    publicCode
-                                    transportMode
-                                    presentation {
-                                        colour
-                                        textColour
-                                    }
-                                }
+                            publicCode
+                            presentation {
+                              textColour
                             }
+                          }
                         }
+                      }
                     }
-                    distance
-                    }
+                  }
                 }
+                distance
+              }
             }
+          }
         }
     `;
 
@@ -228,3 +192,4 @@ function get_stops_nearby_location_success(pos) {
         }
     }));
 }
+    
