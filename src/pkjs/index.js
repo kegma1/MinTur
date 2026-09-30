@@ -74,15 +74,15 @@ function get_stops_nearby_location_success(pos) {
 
     let query = `
         query GetNearest($lat: Float!, $lon: Float!) {
-            nearest(
-                latitude: $lat
-                longitude: $lon
-                filterByPlaceTypes: stopPlace
-                filterByInUse: true
-                maximumDistance: 2000
-                maximumResults: 10
-                filterByModes: [bus, tram, rail, metro, water]
-            ) {
+          nearest(
+            latitude: $lat
+            longitude: $lon
+            filterByPlaceTypes: stopPlace
+            filterByInUse: true
+            maximumDistance: 2000
+            maximumResults: 10
+            filterByModes: [bus, tram, rail, metro, water]
+          ) {
             edges {
               node {
                 place {
@@ -93,23 +93,26 @@ function get_stops_nearby_location_success(pos) {
                     longitude
                     transportMode
                     quays(filterByInUse: true) {
-                      id
-                      publicCode
-                      name
                       description
                       estimatedCalls {
                         aimedArrivalTime
                         aimedDepartureTime
                         serviceJourney {
                           line {
-                            name
                             publicCode
-                            presentation {
-                              textColour
-                            }
+                            transportMode
+                            name
                           }
                         }
+                        cancellation
+                        occupancyStatus
+                        destinationDisplay {
+                          frontText
+                        }
                       }
+                      publicCode
+                      name
+                      id
                     }
                   }
                 }
